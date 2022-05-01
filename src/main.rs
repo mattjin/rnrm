@@ -3,6 +3,7 @@ use std::env;
 use std::path::Path;
 use std::fs;
 use std::collections::HashMap;
+use ini::Ini;
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -34,6 +35,14 @@ fn get_npmrc_path() -> String {
     let os_path = get_user_path();
     let home_path = env::var(os_path).unwrap();
     let path_buf = Path::new(&home_path.to_owned()).join(".npmrc");
+    let path = path_buf.as_path().display().to_string();
+    path
+}
+
+fn get_nrmrc_path() -> String {
+    let os_path = get_user_path();
+    let home_path = env::var(os_path).unwrap();
+    let path_buf = Path::new(&home_path.to_owned()).join(".nrmrc");
     let path = path_buf.as_path().display().to_string();
     path
 }
@@ -102,6 +111,28 @@ fn use_registry(name: &str) -> &'static str {
     return registry_url;
 }
 
+fn add_registry(name: &str, url: &str) -> bool {
+    let nrmrc_path = get_nrmrc_path();
+    let mut conf = Ini::load_from_file(&nrmrc_path).unwrap();
+    for (sec, prop) in &conf {
+        for (_key, value) in prop.iter() {
+            match sec {
+                Some(sec_name) => {
+                    if sec_name == name && url == value {
+                        println!("The registry name or url is already included in the nrm registries. Please make sure that the name and url are unique.");
+                        return  false;
+                    }
+                }
+                None => (),
+            }
+        }
+    }
+    conf.with_section(Some(name))
+        .set("registry", url);
+    conf.write_to_file(&nrmrc_path).unwrap();
+    return true;
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -117,7 +148,9 @@ fn main() {
             };
         },
         Commands::Add { name, url } => {
-            println!("{:?} {:?}", name, url);
+            if let (Some(registry_name), Some(registry_url)) = (name, url) {
+                add_registry(registry_name, registry_url);
+            }
         }
     }
 }
