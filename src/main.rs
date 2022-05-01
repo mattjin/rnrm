@@ -16,6 +16,7 @@ struct Cli {
 enum Commands {
     Ls {},
     Use { name: Option<String> },
+    Add { name: Option<String>, url: Option<String> },
 }
 
 fn get_user_path() -> &'static str {
@@ -91,7 +92,7 @@ fn use_registry(name: &str) -> &'static str {
     let path = get_npmrc_path();
     let contents = fs::read_to_string(&path)
         .expect("Something went wrong reading the file");
-    // let url = contents.split('\n').filter(|x| x.starts_with("registry=")).map(|x| x.replace("registry=", "")).collect::<String>();
+
     let new_content = contents.split("\n").map(|x| if x.starts_with("registry=") {
         format!("registry={}", registry_url)
     } else { x.to_owned() }).collect::<Vec<String>>().join("\n");
@@ -114,6 +115,9 @@ fn main() {
                 Some(n) => use_registry(n),
                 None => "name empty",
             };
+        },
+        Commands::Add { name, url } => {
+            println!("{:?} {:?}", name, url);
         }
     }
 }
