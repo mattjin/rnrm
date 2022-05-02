@@ -1,6 +1,6 @@
+mod config;
+
 use clap::{Parser, Subcommand};
-use std::env;
-use std::path::Path;
 use std::fs;
 use std::collections::HashMap;
 use ini::Ini;
@@ -22,31 +22,12 @@ enum Commands {
     Del { name: Option<String> },
 }
 
-fn get_user_path() -> &'static str {
-    let os = env::consts::OS;
-    let os_path;
-    if os == "windows" {
-        os_path = "USERPROFILE";
-    } else {
-        os_path = "HOME";
-    }
-    os_path
-}
-
 fn get_npmrc_path() -> String {
-    let os_path = get_user_path();
-    let home_path = env::var(os_path).unwrap();
-    let path_buf = Path::new(&home_path.to_owned()).join(".npmrc");
-    let path = path_buf.as_path().display().to_string();
-    path
+    config::get_registry_config_path(".npmrc")
 }
 
 fn get_nrmrc_path() -> String {
-    let os_path = get_user_path();
-    let home_path = env::var(os_path).unwrap();
-    let path_buf = Path::new(&home_path.to_owned()).join(".nrmrc");
-    let path = path_buf.as_path().display().to_string();
-    path
+    config::get_registry_config_path(".nrmrc")
 }
 
 fn get_current_registry_url() -> std::string::String {
@@ -58,13 +39,7 @@ fn get_current_registry_url() -> std::string::String {
 }
 
 fn get_registry_list() -> HashMap<String, String> {
-    let mut registry_list = HashMap::from([
-        ("npm".to_string(), "https://registry.npmjs.org/".to_string()),
-        ("yarn".to_string(), "https://registry.yarnpkg.com/".to_string()),
-        ("tencent".to_string(), "https://mirrors.cloud.tencent.com/npm/".to_string()),
-        ("taobao".to_string(), "https://registry.npmmirror.com/".to_string()),
-        ("npmMirror".to_string(), "https://skimdb.npmjs.com/registry/".to_string()),
-    ]);
+    let mut registry_list = config::get_registry_config();
     let nrmrc_path = get_nrmrc_path();
     let conf = Ini::load_from_file(&nrmrc_path).unwrap();
     let general_section_name = "__General__";
