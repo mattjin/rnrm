@@ -4,6 +4,7 @@ use std::path::Path;
 use std::fs;
 use std::collections::HashMap;
 use ini::Ini;
+use colored::*;
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -127,7 +128,7 @@ fn add_registry(name: &str, url: &str) -> bool {
             match sec {
                 Some(sec_name) => {
                     if sec_name == name && url == value {
-                        println!("The registry name or url is already included in the nrm registries. Please make sure that the name and url are unique.");
+                        println!("{}", "The registry name or url is already included in the nrm registries. Please make sure that the name and url are unique.".red());
                         return  false;
                     }
                 }
@@ -144,7 +145,7 @@ fn add_registry(name: &str, url: &str) -> bool {
 fn del_registry(name: &str) {
     let is_exist = is_registry_exist(name);
     if !is_exist {
-        println!("{:?} no exist", name);
+        println!("registry {} no exist", name.red());
         return;
     }
     let nrmrc_path = get_nrmrc_path();
