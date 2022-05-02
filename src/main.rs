@@ -18,6 +18,7 @@ enum Commands {
     Ls {},
     Use { name: Option<String> },
     Add { name: Option<String>, url: Option<String> },
+    Del { name: Option<String> },
 }
 
 fn get_user_path() -> &'static str {
@@ -55,14 +56,23 @@ fn get_current_registry_url() -> std::string::String {
     url
 }
 
-fn get_registry_list() -> HashMap<&'static str, &'static str> {
-    let registry_list = HashMap::from([
-        ("npm", "https://registry.npmjs.org/"),
-        ("yarn", "https://registry.yarnpkg.com/"),
-        ("tencent", "https://mirrors.cloud.tencent.com/npm/"),
-        ("taobao", "https://registry.npmmirror.com/"),
-        ("npmMirror", "https://skimdb.npmjs.com/registry/"),
+fn get_registry_list() -> HashMap<String, String> {
+    let mut registry_list = HashMap::from([
+        ("npm".to_string(), "https://registry.npmjs.org/".to_string()),
+        ("yarn".to_string(), "https://registry.yarnpkg.com/".to_string()),
+        ("tencent".to_string(), "https://mirrors.cloud.tencent.com/npm/".to_string()),
+        ("taobao".to_string(), "https://registry.npmmirror.com/".to_string()),
+        ("npmMirror".to_string(), "https://skimdb.npmjs.com/registry/".to_string()),
     ]);
+    let nrmrc_path = get_nrmrc_path();
+    let conf = Ini::load_from_file(&nrmrc_path).unwrap();
+    let general_section_name = "__General__";
+    for (sec, prop) in &conf {
+        let section_name = sec.as_ref().unwrap_or(&general_section_name);
+        for (_k, v) in prop.iter() {
+            registry_list.insert(section_name.to_string(), v.to_string());
+        }
+    }
     return registry_list;
 }
 
@@ -74,8 +84,8 @@ fn print_registry_list(current_registry: &String) {
             max_len = key.len();
         }
     }
-    for (name, url) in &registry_list {
-        let star = if url == current_registry { "*" } else { " " };
+    for (name, url) in registry_list {
+        let star = if &url == current_registry { "*" } else { " " };
         println!("{:1} {} {:-<width$} {}", star, name, "-", url, width = max_len + 3 - name.len());
     }
 }
@@ -89,11 +99,11 @@ fn is_registry_exist(name: &str) -> bool {
     }
 }
 
-fn use_registry(name: &str) -> &'static str {
+fn use_registry(name: &str) {
     let is_exist = is_registry_exist(name);
     if !is_exist {
         println!("{:?} no exist", name);
-        return "";
+        return;
     }
     let registry_list = get_registry_list();
     let registry_url = registry_list.get(name).unwrap();
@@ -107,8 +117,6 @@ fn use_registry(name: &str) -> &'static str {
     } else { x.to_owned() }).collect::<Vec<String>>().join("\n");
 
     fs::write(&path, new_content).expect("Unable to write file");
-
-    return registry_url;
 }
 
 fn add_registry(name: &str, url: &str) -> bool {
@@ -133,6 +141,28 @@ fn add_registry(name: &str, url: &str) -> bool {
     return true;
 }
 
+fn del_registry(name: &str) {
+    let is_exist = is_registry_exist(name);
+    if !is_exist {
+        println!("{:?} no exist", name);
+        return;
+    }
+    let nrmrc_path = get_nrmrc_path();
+    let conf = Ini::load_from_file(&nrmrc_path).unwrap();
+    let mut new_conf = Ini::new();
+
+    let general_section_name = "__General__";
+    for (sec, prop) in &conf {
+        let section_name = sec.as_ref().unwrap_or(&general_section_name);
+        for (_key, value) in prop.iter() {
+            if *section_name != name {
+                new_conf.with_section(Some(section_name.to_string())).set("registry", value);
+            }
+        }
+    }
+    new_conf.write_to_file(&nrmrc_path).unwrap();
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -144,13 +174,19 @@ fn main() {
         Commands::Use { name } => {
             match name {
                 Some(n) => use_registry(n),
-                None => "name empty",
+                None => (),
             };
         },
         Commands::Add { name, url } => {
             if let (Some(registry_name), Some(registry_url)) = (name, url) {
                 add_registry(registry_name, registry_url);
             }
-        }
+        },
+        Commands::Del { name } => {
+            match name {
+                Some(n) => del_registry(n),
+                None => (),
+            };
+        },
     }
 }
