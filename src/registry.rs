@@ -1,6 +1,6 @@
+use colored::*;
 use ini::Ini;
 use std::{collections::HashMap, fs};
-use colored::*;
 
 use crate::config;
 
@@ -108,13 +108,15 @@ impl Registry {
         let nrmrc_path = &self.nrmrc_path;
         let conf = Ini::load_from_file(&nrmrc_path).unwrap();
         let mut new_conf = Ini::new();
-    
+
         let general_section_name = "__General__";
         for (sec, prop) in &conf {
             let section_name = sec.as_ref().unwrap_or(&general_section_name);
             for (_key, value) in prop.iter() {
                 if *section_name != name {
-                    new_conf.with_section(Some(section_name.to_string())).set("registry", value);
+                    new_conf
+                        .with_section(Some(section_name.to_string()))
+                        .set("registry", value);
                 }
             }
         }
@@ -130,15 +132,14 @@ impl Registry {
                     Some(sec_name) => {
                         if sec_name == name && url == value {
                             println!("{}", "The registry name or url is already included in the nrm registries. Please make sure that the name and url are unique.".red());
-                            return  false;
+                            return false;
                         }
                     }
                     None => (),
                 }
             }
         }
-        conf.with_section(Some(name))
-            .set("registry", url);
+        conf.with_section(Some(name)).set("registry", url);
         conf.write_to_file(&nrmrc_path).unwrap();
         return true;
     }

@@ -14,9 +14,16 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Ls {},
-    Use { name: Option<String> },
-    Add { name: Option<String>, url: Option<String> },
-    Del { name: Option<String> },
+    Use {
+        name: Option<String>,
+    },
+    Add {
+        name: Option<String>,
+        url: Option<String>,
+    },
+    Del {
+        name: Option<String>,
+    },
 }
 
 fn main() {
@@ -26,23 +33,23 @@ fn main() {
     match &cli.command {
         Commands::Ls {} => {
             reg.list_registry();
-        },
+        }
         Commands::Use { name } => {
             match name {
                 Some(n) => reg.use_registry(n),
                 None => (),
             };
-        },
+        }
         Commands::Add { name, url } => {
             if let (Some(registry_name), Some(registry_url)) = (name, url) {
                 reg.add_registry(registry_name, registry_url);
             }
-        },
+        }
         Commands::Del { name } => {
             match name {
                 Some(n) => reg.del_registry(n),
                 None => (),
             };
-        },
+        }
     }
 }
