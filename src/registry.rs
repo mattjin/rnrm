@@ -1,7 +1,7 @@
 use colored::*;
 use ini::Ini;
-use std::{collections::HashMap, fs};
 use open;
+use std::{collections::HashMap, fs};
 
 use crate::config;
 use crate::logger;
