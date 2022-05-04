@@ -1,8 +1,14 @@
+mod actions;
 mod config;
 mod logger;
-mod registry;
 
 use clap::{Parser, Subcommand};
+
+use actions::add;
+use actions::del;
+use actions::ls;
+use actions::open;
+use actions::select;
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -31,33 +37,33 @@ enum Commands {
 }
 
 fn main() {
-    let reg = registry::Registry::new();
+    let reg = actions::Registry::new();
     let cli = Cli::parse();
 
     match &cli.command {
         Commands::Ls {} => {
-            reg.list_registry();
+            ls::list_registry(&reg);
         }
         Commands::Use { name } => {
             match name {
-                Some(n) => reg.use_registry(n),
+                Some(n) => select::use_registry(&reg, n),
                 None => (),
             };
         }
         Commands::Add { name, url } => {
             if let (Some(registry_name), Some(registry_url)) = (name, url) {
-                reg.add_registry(registry_name, registry_url);
+                add::add_registry(&reg, registry_name, registry_url);
             }
         }
         Commands::Del { name } => {
             match name {
-                Some(n) => reg.del_registry(n),
+                Some(n) => del::del_registry(&reg, n),
                 None => (),
             };
         }
         Commands::Open { name } => {
             match name {
-                Some(n) => reg.open_registry(n),
+                Some(n) => open::open_registry(&reg, n),
                 None => (),
             };
         }
