@@ -3,18 +3,26 @@ use std::collections::HashMap;
 use std::env;
 use std::path::Path;
 
-pub fn get_registry_config() -> HashMap<String, String> {
+pub fn get_registry_config() -> (
+    HashMap<std::string::String, std::string::String>,
+    HashMap<std::string::String, std::string::String>,
+) {
     let mut registry_list = HashMap::new();
+    let mut home_list = HashMap::new();
     let conf = Ini::load_from_file("./config.ini").unwrap();
 
     let general_section_name = "";
     for (sec, prop) in &conf {
         let section_name = sec.as_ref().unwrap_or(&general_section_name);
-        for (_k, v) in prop.iter() {
-            registry_list.insert(section_name.to_string(), v.to_string());
+        for (k, v) in prop.iter() {
+            if k == "registry" {
+                registry_list.insert(section_name.to_string(), v.to_string());
+            } else if k == "home" {
+                home_list.insert(section_name.to_string(), v.to_string());
+            }
         }
     }
-    return registry_list;
+    return (registry_list, home_list);
 }
 
 fn get_user_path() -> &'static str {

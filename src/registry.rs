@@ -1,18 +1,20 @@
 use colored::*;
 use ini::Ini;
 use std::{collections::HashMap, fs};
+use open;
 
 use crate::config;
 
 pub struct Registry {
     registry_list: HashMap<String, String>,
+    home_list: HashMap<String, String>,
     npmrc_path: String,
     nrmrc_path: String,
 }
 
 impl Registry {
     pub fn new() -> Self {
-        let mut registry_list = config::get_registry_config();
+        let (mut registry_list, home_list) = config::get_registry_config();
         let nrmrc_path = config::get_registry_config_path(".nrmrc");
         let npmrc_path = config::get_registry_config_path(".npmrc");
         let conf = Ini::load_from_file(&nrmrc_path).unwrap();
@@ -27,6 +29,7 @@ impl Registry {
             npmrc_path,
             nrmrc_path,
             registry_list,
+            home_list,
         }
     }
 
@@ -142,5 +145,10 @@ impl Registry {
         conf.with_section(Some(name)).set("registry", url);
         conf.write_to_file(&nrmrc_path).unwrap();
         return true;
+    }
+
+    pub fn open_registry(&self, name: &str) {
+        let home = self.home_list.get(name).unwrap();
+        open::that(home).unwrap();
     }
 }

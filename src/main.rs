@@ -24,6 +24,9 @@ enum Commands {
     Del {
         name: Option<String>,
     },
+    Open {
+        name: Option<String>,
+    },
 }
 
 fn main() {
@@ -48,6 +51,12 @@ fn main() {
         Commands::Del { name } => {
             match name {
                 Some(n) => reg.del_registry(n),
+                None => (),
+            };
+        }
+        Commands::Open { name } => {
+            match name {
+                Some(n) => reg.open_registry(n),
                 None => (),
             };
         }
