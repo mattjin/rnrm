@@ -1,5 +1,6 @@
 mod config;
 mod registry;
+mod logger;
 
 use clap::{Parser, Subcommand};
 
