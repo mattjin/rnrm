@@ -1,9 +1,12 @@
 [package]
 name = "rnrm"
-version = "0.1.1"
+version = "0.1.2"
 description = "A NPM registry manager"
 edition = "2021"
 license = "MIT OR Apache-2.0"
+
+[package]
+include = ["/config.ini"]
 
 [dependencies]
 clap = { version = "3.1.12", features = ["derive"] }
