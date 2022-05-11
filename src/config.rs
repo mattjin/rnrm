@@ -7,9 +7,10 @@ pub fn get_registry_config() -> (
     HashMap<std::string::String, std::string::String>,
     HashMap<std::string::String, std::string::String>,
 ) {
+    let path = get_init_path();
     let mut registry_list = HashMap::new();
     let mut home_list = HashMap::new();
-    let conf = Ini::load_from_file("./config.ini").unwrap();
+    let conf = Ini::load_from_file(path).unwrap();
 
     let general_section_name = "";
     for (sec, prop) in &conf {
@@ -23,6 +24,12 @@ pub fn get_registry_config() -> (
         }
     }
     return (registry_list, home_list);
+}
+
+fn get_init_path() -> String {
+    let current_dir = std::env::current_dir().unwrap();
+    let path = current_dir.join("config.ini").as_path().display().to_string();
+    path
 }
 
 fn get_user_path() -> &'static str {
