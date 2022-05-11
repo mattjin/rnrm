@@ -34,6 +34,7 @@ enum Commands {
     Open {
         name: Option<String>,
     },
+    Version {},
 }
 
 fn main() {
@@ -43,6 +44,10 @@ fn main() {
     match &cli.command {
         Commands::Ls {} => {
             ls::list_registry(&reg);
+        }
+        Commands::Version {} => {
+            let version: &str = env!("CARGO_PKG_VERSION");
+            println!("v{}", version);
         }
         Commands::Use { name } => {
             match name {
