@@ -25,8 +25,10 @@ impl Registry {
         let general_section_name = "";
         for (sec, prop) in &conf {
             let section_name = sec.as_ref().unwrap_or(&general_section_name);
-            for (_k, v) in prop.iter() {
-                registry_list.insert(section_name.to_string(), v.to_string());
+            for (k, v) in prop.iter() {
+                if k == "registry" {
+                    registry_list.insert(section_name.to_string(), v.to_string());
+                }
             }
         }
         Self {
