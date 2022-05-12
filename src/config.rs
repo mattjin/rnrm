@@ -8,6 +8,7 @@ pub fn get_registry_config() -> (
     HashMap<std::string::String, std::string::String>,
 ) {
     let path = get_init_path();
+    println!("{}", path);
     let mut registry_list = HashMap::new();
     let mut home_list = HashMap::new();
     let conf = Ini::load_from_file(path).unwrap();
