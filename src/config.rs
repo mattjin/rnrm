@@ -28,7 +28,7 @@ pub fn get_registry_config() -> (
 }
 
 fn get_init_path() -> String {
-    let current_dir = std::env::current_dir().unwrap();
+    let current_dir = std::env::current_exe().unwrap();
     let path = current_dir.join("config.ini").as_path().display().to_string();
     path
 }
