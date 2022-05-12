@@ -1,4 +1,3 @@
-use ini::Ini;
 use std::collections::HashMap;
 use std::env;
 use std::path::Path;
@@ -7,30 +6,34 @@ pub fn get_registry_config() -> (
     HashMap<std::string::String, std::string::String>,
     HashMap<std::string::String, std::string::String>,
 ) {
-    let path = get_init_path();
-    println!("{}", path);
     let mut registry_list = HashMap::new();
     let mut home_list = HashMap::new();
-    let conf = Ini::load_from_file(path).unwrap();
 
-    let general_section_name = "";
-    for (sec, prop) in &conf {
-        let section_name = sec.as_ref().unwrap_or(&general_section_name);
-        for (k, v) in prop.iter() {
-            if k == "registry" {
-                registry_list.insert(section_name.to_string(), v.to_string());
-            } else if k == "home" {
-                home_list.insert(section_name.to_string(), v.to_string());
-            }
-        }
+    let default_registry: HashMap<&str, &str> = HashMap::from([
+        ("npm", "https://registry.npmjs.org/"),
+        ("yarn", "https://registry.yarnpkg.com/"),
+        ("tencent", "https://mirrors.cloud.tencent.com/npm/"),
+        ("taobao", "https://registry.npmmirror.com/"),
+        ("npmMirror", "https://skimdb.npmjs.com/registry/"),
+    ]);
+    
+    let default_home: HashMap<&str, &str> = HashMap::from([
+        ("npm", "https://www.npmjs.org"),
+        ("yarn", "https://yarnpkg.com"),
+        ("tencent", "https://mirrors.cloud.tencent.com/npm/"),
+        ("taobao", "https://npmmirror.com"),
+        ("npmMirror", "https://skimdb.npmjs.com"),
+    ]);
+
+    for (key, value) in default_registry {
+        registry_list.insert(key.to_string(), value.to_string());
     }
-    return (registry_list, home_list);
-}
 
-fn get_init_path() -> String {
-    let current_dir = std::env::current_exe().unwrap();
-    let path = current_dir.join("config.ini").as_path().display().to_string();
-    path
+    for (key, value) in default_home {
+        home_list.insert(key.to_string(), value.to_string());
+    }
+
+    return (registry_list, home_list);
 }
 
 fn get_user_path() -> &'static str {
