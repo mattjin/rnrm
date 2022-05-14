@@ -22,6 +22,7 @@ pub fn list_registry(reg: &actions::Registry) {
             max_len = key.len();
         }
     }
+    println!("");
     for (name, url) in registry_list {
         let star = if *url == current_url { "*" } else { " " };
         println!(
@@ -33,4 +34,5 @@ pub fn list_registry(reg: &actions::Registry) {
             width = max_len + 3 - name.len()
         );
     }
+    println!("");
 }

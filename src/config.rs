@@ -1,15 +1,15 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::env;
 use std::path::Path;
 
 pub fn get_registry_config() -> (
-    HashMap<std::string::String, std::string::String>,
-    HashMap<std::string::String, std::string::String>,
+    BTreeMap<String, String>,
+    BTreeMap<String, String>,
 ) {
-    let mut registry_list = HashMap::new();
-    let mut home_list = HashMap::new();
+    let mut registry_list = BTreeMap::new();
+    let mut home_list = BTreeMap::new();
 
-    let default_registry: HashMap<&str, &str> = HashMap::from([
+    let default_registry: BTreeMap<&str, &str> = BTreeMap::from([
         ("npm", "https://registry.npmjs.org/"),
         ("yarn", "https://registry.yarnpkg.com/"),
         ("tencent", "https://mirrors.cloud.tencent.com/npm/"),
@@ -17,14 +17,13 @@ pub fn get_registry_config() -> (
         ("npmMirror", "https://skimdb.npmjs.com/registry/"),
     ]);
     
-    let default_home: HashMap<&str, &str> = HashMap::from([
+    let default_home: BTreeMap<&str, &str> = BTreeMap::from([
         ("npm", "https://www.npmjs.org"),
         ("yarn", "https://yarnpkg.com"),
         ("tencent", "https://mirrors.cloud.tencent.com/npm/"),
         ("taobao", "https://npmmirror.com"),
         ("npmMirror", "https://skimdb.npmjs.com"),
     ]);
-
     for (key, value) in default_registry {
         registry_list.insert(key.to_string(), value.to_string());
     }
@@ -32,7 +31,6 @@ pub fn get_registry_config() -> (
     for (key, value) in default_home {
         home_list.insert(key.to_string(), value.to_string());
     }
-
     return (registry_list, home_list);
 }
 
