@@ -24,5 +24,5 @@ pub fn log_add_success(name: &str) {
 }
 
 pub fn log_add_exist_err() {
-    log("The registry name or url is already included in the nrm registries. Please make sure that the name and url are unique.", LogErr::Err);
+    log("\nThe registry name or url is already included in the nrm registries. Please make sure that the name and url are unique.\n", LogErr::Err);
 }
