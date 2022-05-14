@@ -24,19 +24,26 @@ enum Commands {
     Ls {},
     /// Change registry
     Use {
+        /// /// registry name
         name: Option<String>,
     },
     /// Add one custom registry
     Add {
+        /// registry name
         name: Option<String>,
+        /// registry url
         url: Option<String>,
+        /// registry home url, optional
+        home: Option<String>,
     },
     /// Delete one custom registry
     Del {
+        /// registry name
         name: Option<String>,
     },
     /// Open the homepage of registry with optional browser
     Open {
+        /// registry name
         name: Option<String>,
     },
     /// View version
@@ -61,9 +68,9 @@ fn main() {
                 None => (),
             };
         }
-        Commands::Add { name, url } => {
+        Commands::Add { name, url, home } => {
             if let (Some(registry_name), Some(registry_url)) = (name, url) {
-                add::add_registry(&reg, registry_name, registry_url);
+                add::add_registry(&reg, registry_name, registry_url, home);
             }
         }
         Commands::Del { name } => {

@@ -18,7 +18,7 @@ pub struct Registry {
 
 impl Registry {
     pub fn new() -> Self {
-        let (mut registry_list, home_list) = config::get_registry_config();
+        let (mut registry_list, mut home_list) = config::get_registry_config();
         let nrmrc_path = config::get_registry_config_path(".nrmrc");
         let npmrc_path = config::get_registry_config_path(".npmrc");
         let result = Ini::load_from_file(&nrmrc_path);
@@ -31,6 +31,8 @@ impl Registry {
                     for (k, v) in prop.iter() {
                         if k == "registry" {
                             registry_list.insert(section_name.to_string(), v.to_string());
+                        } else if k == "home" {
+                            home_list.insert(section_name.to_string(), v.to_string());
                         }
                     }
                 }
