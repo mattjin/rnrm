@@ -20,20 +20,26 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// List all the registries
     Ls {},
+    /// Change registry
     Use {
         name: Option<String>,
     },
+    /// Add one custom registry
     Add {
         name: Option<String>,
         url: Option<String>,
     },
+    /// Delete one custom registry
     Del {
         name: Option<String>,
     },
+    /// Open the homepage of registry with optional browser
     Open {
         name: Option<String>,
     },
+    /// View version
     Version {},
 }
 
