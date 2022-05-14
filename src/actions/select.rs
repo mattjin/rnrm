@@ -11,7 +11,7 @@ pub fn use_registry(reg: &actions::Registry, name: &str) {
     let registry_url = registry_list.get(name).unwrap();
 
     let path = &reg.npmrc_path;
-    let contents = fs::read_to_string(path).expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(path).expect("read npmrc file error!");
 
     let new_content = contents
         .split("\n")
@@ -25,5 +25,6 @@ pub fn use_registry(reg: &actions::Registry, name: &str) {
         .collect::<Vec<String>>()
         .join("\n");
 
-    fs::write(&path, new_content).expect("Unable to write file");
+    fs::write(&path, new_content).expect("Unable to write npmrc file");
+    println!("\nRegistry has been set to: {}\n", registry_url);
 }

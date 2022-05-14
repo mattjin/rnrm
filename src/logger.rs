@@ -17,7 +17,7 @@ pub fn log(message: &str, log_err: LogErr) {
 pub fn log_add_success(name: &str) {
     let message = format!("rnrm use {}", name);
     println!(
-        "Add registry {name} success, run {} command to use {name} registry.",
+        "\nAdd registry {name} success, run {} command to use {name} registry.\n",
         message.green(),
         name = name
     );

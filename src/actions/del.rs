@@ -26,6 +26,6 @@ pub fn del_registry(reg: &actions::Registry, name: &str) {
         }
     }
     new_conf.write_to_file(&nrmrc_path).unwrap();
-    let success_msg = format!("The registry '{}' has been deleted successfully.", name);
+    let success_msg = format!("\nThe registry '{}' has been deleted successfully.\n", name);
     log(success_msg.as_str(), logger::LogErr::Success)
 }
