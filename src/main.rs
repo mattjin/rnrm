@@ -24,7 +24,7 @@ enum Commands {
     Ls {},
     /// Change registry
     Use {
-        /// /// registry name
+        /// registry name
         name: Option<String>,
     },
     /// Add one custom registry
