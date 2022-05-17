@@ -33,8 +33,7 @@ mod open_tests {
     #[test]
     #[should_panic]
     fn if_no_exist_open_not_works() {
-        let test: BTreeMap<String, String> =
-            BTreeMap::new();
+        let test: BTreeMap<String, String> = BTreeMap::new();
         let mut test_wrapper = MockRegistry { test_list: test };
         open_registry(&mut test_wrapper, "not_exist_key");
     }

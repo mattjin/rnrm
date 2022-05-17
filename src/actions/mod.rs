@@ -48,14 +48,13 @@ impl Registry {
             home_list,
         }
     }
+}
 
-    fn is_registry_exist(&self, name: &str) -> bool {
-        let registry_list = &self.registry_list;
-        let result = registry_list.keys().find(|x| *x == &name);
-        match result {
-            Some(_) => true,
-            None => false,
-        }
+pub fn is_registry_exist(registry_list: &BTreeMap<String, String>, name: &str) -> bool {
+    let result = registry_list.keys().find(|x| *x == &name);
+    match result {
+        Some(_) => true,
+        None => false,
     }
 }
 
@@ -69,9 +68,6 @@ pub trait RegistryWrapper {
         String::new()
     }
     fn open(&self, _p: String) {}
-    fn is_registry_exist(&self, _name: &str) -> bool {
-        true
-    }
 }
 
 impl RegistryWrapper for Registry {

@@ -1,10 +1,10 @@
-use crate::actions::RegistryWrapper;
+use crate::actions::{is_registry_exist, RegistryWrapper};
 use crate::logger;
 use crate::logger::log;
 use ini::Ini;
 
 pub fn del_registry(reg: &impl RegistryWrapper, name: &str) {
-    let is_exist = reg.is_registry_exist(name);
+    let is_exist = is_registry_exist(reg.get_registry_list(), name);
     if !is_exist {
         let warning_msg = format!("\nregistry {} no exist\n", name);
         log(warning_msg.as_str(), logger::LogErr::Warning);

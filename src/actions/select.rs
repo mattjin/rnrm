@@ -1,16 +1,16 @@
-use crate::actions;
+use crate::actions::{is_registry_exist, RegistryWrapper};
 use std::fs;
 
-pub fn use_registry(reg: &actions::Registry, name: &str) {
-    let is_exist = reg.is_registry_exist(name);
+pub fn use_registry(reg: &impl RegistryWrapper, name: &str) {
+    let registry_list = &reg.get_registry_list();
+    let is_exist = is_registry_exist(registry_list, name);
     if !is_exist {
         println!("{:?} no exist", name);
         return;
     }
-    let registry_list = &reg.registry_list;
     let registry_url = registry_list.get(name).unwrap();
 
-    let path = &reg.npmrc_path;
+    let path = &reg.get_npmrc_path();
     let contents = fs::read_to_string(path).expect("read npmrc file error!");
 
     let new_content = contents
