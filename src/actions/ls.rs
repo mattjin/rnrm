@@ -1,10 +1,10 @@
 use crate::actions;
-
+use actions::RegistryWrapper;
 use std::fs;
 
-fn get_current_registry_url(reg: &actions::Registry) -> String {
+fn get_current_registry_url(reg: &impl RegistryWrapper) -> String {
     let contents =
-        fs::read_to_string(&reg.npmrc_path).expect("Something went wrong reading the file");
+        fs::read_to_string(&reg.get_npmrc_path()).expect("Something went wrong reading the file");
     let url = contents
         .split('\n')
         .filter(|x| x.starts_with("registry="))
@@ -13,9 +13,10 @@ fn get_current_registry_url(reg: &actions::Registry) -> String {
     url
 }
 
-pub fn list_registry(reg: &actions::Registry) {
+pub fn list_registry(reg: &impl RegistryWrapper) {
     let current_url = get_current_registry_url(reg);
-    let registry_list = &reg.registry_list;
+    println!("{}", current_url);
+    let registry_list = &reg.get_registry_list();
     let mut max_len = 0;
     for key in registry_list.keys() {
         if key.len() > max_len {
@@ -23,7 +24,7 @@ pub fn list_registry(reg: &actions::Registry) {
         }
     }
     println!("");
-    for (name, url) in registry_list {
+    for (name, url) in *registry_list {
         let star = if *url == current_url { "*" } else { " " };
         println!(
             "{:1} {} {:-<width$} {}",

@@ -2,10 +2,7 @@ use std::collections::BTreeMap;
 use std::env;
 use std::path::Path;
 
-pub fn get_registry_config() -> (
-    BTreeMap<String, String>,
-    BTreeMap<String, String>,
-) {
+pub fn get_registry_config() -> (BTreeMap<String, String>, BTreeMap<String, String>) {
     let mut registry_list = BTreeMap::new();
     let mut home_list = BTreeMap::new();
 
@@ -16,7 +13,7 @@ pub fn get_registry_config() -> (
         ("taobao", "https://registry.npmmirror.com/"),
         ("npmMirror", "https://skimdb.npmjs.com/registry/"),
     ]);
-    
+
     let default_home: BTreeMap<&str, &str> = BTreeMap::from([
         ("npm", "https://www.npmjs.org"),
         ("yarn", "https://yarnpkg.com"),

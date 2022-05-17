@@ -8,6 +8,8 @@ use ini::Ini;
 
 use crate::config;
 use std::collections::BTreeMap;
+extern crate open as open_rs;
+use open_rs::that;
 
 pub struct Registry {
     registry_list: BTreeMap<String, String>,
@@ -36,7 +38,7 @@ impl Registry {
                         }
                     }
                 }
-            },
+            }
             Err(_) => (),
         }
         Self {
@@ -54,5 +56,41 @@ impl Registry {
             Some(_) => true,
             None => false,
         }
+    }
+}
+
+pub trait RegistryWrapper {
+    fn get_registry_list(&self) -> &BTreeMap<String, String>;
+    fn get_home_list(&self) -> &BTreeMap<String, String>;
+    fn get_nrmrc_path(&self) -> String {
+        String::new()
+    }
+    fn get_npmrc_path(&self) -> String {
+        String::new()
+    }
+    fn open(&self, _p: String) {}
+    fn is_registry_exist(&self, _name: &str) -> bool {
+        true
+    }
+}
+
+impl RegistryWrapper for Registry {
+    fn open(&self, p: String) {
+        that(p).unwrap();
+    }
+
+    fn get_registry_list(&self) -> &BTreeMap<String, String> {
+        &self.registry_list
+    }
+
+    fn get_home_list(&self) -> &BTreeMap<String, String> {
+        &self.home_list
+    }
+
+    fn get_nrmrc_path(&self) -> String {
+        self.nrmrc_path.clone()
+    }
+    fn get_npmrc_path(&self) -> String {
+        self.npmrc_path.clone()
     }
 }

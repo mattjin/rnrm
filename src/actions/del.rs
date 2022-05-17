@@ -1,16 +1,16 @@
-use crate::actions;
+use crate::actions::RegistryWrapper;
 use crate::logger;
 use crate::logger::log;
 use ini::Ini;
 
-pub fn del_registry(reg: &actions::Registry, name: &str) {
+pub fn del_registry(reg: &impl RegistryWrapper, name: &str) {
     let is_exist = reg.is_registry_exist(name);
     if !is_exist {
         let warning_msg = format!("\nregistry {} no exist\n", name);
         log(warning_msg.as_str(), logger::LogErr::Warning);
         return;
     }
-    let nrmrc_path = &reg.nrmrc_path;
+    let nrmrc_path = &reg.get_nrmrc_path();
     let result = Ini::load_from_file(&nrmrc_path);
     match result {
         Ok(conf) => {
@@ -30,7 +30,7 @@ pub fn del_registry(reg: &actions::Registry, name: &str) {
             new_conf.write_to_file(&nrmrc_path).unwrap();
             let success_msg = format!("\nThe registry '{}' has been deleted successfully.\n", name);
             log(success_msg.as_str(), logger::LogErr::Success)
-        },
+        }
         Err(_) => (),
     }
 }
