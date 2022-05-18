@@ -82,7 +82,7 @@ mod add_tests {
     fn it_works() {
         let test: BTreeMap<String, String> = BTreeMap::new();
         let path = env::current_dir().unwrap();
-        let file_path = path.join("text.ini");
+        let file_path = path.join("add_test.ini");
         let path_str = file_path.as_path().display().to_string();
         let mut test_wrapper = MockRegistry {
             test_list: test,

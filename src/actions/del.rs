@@ -31,7 +31,9 @@ pub fn del_registry(reg: &impl RegistryWrapper, name: &str) -> bool {
             let success_msg = format!("\nThe registry '{}' has been deleted successfully.\n", name);
             log(success_msg.as_str(), logger::LogErr::Success)
         }
-        Err(_) => { panic!("Fail to read config file") },
+        Err(_) => {
+            panic!("Fail to read config file")
+        }
     }
     return true;
 }
@@ -39,8 +41,8 @@ pub fn del_registry(reg: &impl RegistryWrapper, name: &str) -> bool {
 #[cfg(test)]
 mod del_tests {
     use super::*;
-    use std::env;
     use std::collections::BTreeMap;
+    use std::env;
     use std::fs;
 
     struct MockRegistry {
@@ -49,7 +51,6 @@ mod del_tests {
     }
 
     impl RegistryWrapper for MockRegistry {
-
         fn get_registry_list(&self) -> &BTreeMap<String, String> {
             &self.registry_list
         }
@@ -66,7 +67,10 @@ mod del_tests {
     #[test]
     fn if_no_exist_del_not_works() {
         let registry_list: BTreeMap<String, String> = BTreeMap::new();
-        let mut registry_wrapper = MockRegistry { registry_list, nrmrc_path: String::from("/no_exist") };
+        let mut registry_wrapper = MockRegistry {
+            registry_list,
+            nrmrc_path: String::from("/no_exist"),
+        };
         let result = del_registry(&mut registry_wrapper, "not_exist_key");
         assert_eq!(result, false);
     }
@@ -76,7 +80,10 @@ mod del_tests {
     fn if_no_found_config_file_should_panic() {
         let registry_list: BTreeMap<String, String> =
             BTreeMap::from([("npm".to_string(), "https://registry.npmjs.org/".to_string())]);
-        let mut registry_wrapper = MockRegistry { registry_list, nrmrc_path: String::from("/no_exist") };
+        let mut registry_wrapper = MockRegistry {
+            registry_list,
+            nrmrc_path: String::from("/no_exist"),
+        };
         del_registry(&mut registry_wrapper, "npm");
     }
 
@@ -85,12 +92,16 @@ mod del_tests {
         let registry_list: BTreeMap<String, String> =
             BTreeMap::from([("npm".to_string(), "https://registry.npmjs.org/".to_string())]);
         let path = env::current_dir().unwrap();
-        let file_path = path.join("test.ini");
+        let file_path = path.join("del_test.ini");
         let path_str = file_path.as_path().display().to_string();
         let mut conf = Ini::new();
-        conf.with_section(Some("npm")).set("registry", "https://registry.npmjs.org/");
+        conf.with_section(Some("npm"))
+            .set("registry", "https://registry.npmjs.org/");
         conf.write_to_file(&path_str).unwrap();
-        let mut registry_wrapper = MockRegistry { registry_list, nrmrc_path: path_str.clone()  };
+        let mut registry_wrapper = MockRegistry {
+            registry_list,
+            nrmrc_path: path_str.clone(),
+        };
         del_registry(&mut registry_wrapper, "npm");
 
         let result = Ini::load_from_file(&path_str);
