@@ -68,10 +68,9 @@ fn main() {
             }
         }
         Commands::Del { name } => {
-            match name {
-                Some(n) => del::del_registry(&reg, n),
-                None => (),
-            };
+            if let Some(n) = name {
+                del::del_registry(&reg, n);
+            }
         }
         Commands::Open { name } => {
             match name {
