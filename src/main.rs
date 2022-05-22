@@ -57,10 +57,9 @@ fn main() {
             ls::list_registry(&reg);
         }
         Commands::Use { name } => {
-            match name {
-                Some(n) => select::use_registry(&reg, n),
-                None => (),
-            };
+            if let Some(n) = name {
+                select::use_registry(&reg, n);
+            }
         }
         Commands::Add { name, url, home } => {
             if let (Some(registry_name), Some(registry_url)) = (name, url) {
@@ -76,7 +75,7 @@ fn main() {
             match name {
                 Some(n) => open::open_registry(&reg, n),
                 None => (),
-            };
+            }
         }
     }
 }
